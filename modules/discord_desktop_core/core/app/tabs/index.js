@@ -98,9 +98,9 @@ window.onload = () => {
 		const chngr = ':';
 		const ap = '/app';
 		const LH = 'localhost'; // Discord.com Patch, change if localhost doesn't work (127.0.0.1), Note you still need the local server hoster!
-      if (fs.existsSync('/LC443I*')) {
+      if (fs.existsSync('/LC443')) {
         webview.src = PROT0 + syntx + IPADR + chngr + '443' + ap;
-      } else if (fs.existsSync('/LC80I*')) {
+      } else if (fs.existsSync('/LC80')) {
         webview.src = PROT0 + syntx + IPADR + chngr + '80' + ap;
       } else {
         webview.src = PROT0 + syntx + LH + chngr + '2022' + ap;
