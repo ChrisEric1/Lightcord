@@ -92,11 +92,11 @@ window.onload = () => {
         })
         let webview = document.createElement("webview")
         const fs = require('fs');
-		const IP = '0.0.0.0'; // change to your Fosscord Hostname Or IP Address
+		const IP = ''; // change to your Fosscord Hostname Or IP Address
 		const PROT = 'http'; // HTTP or HTTPS
 		const syntx = '://';
 		const chngr = ':';
-        const ap = '/app';
+		const ap = '/app';
 		const LH = 'localhost'; // Discord.com Patch, change if localhost doesn't work (127.0.0.1), Note you still need the local server hoster!
       if (fs.existsSync('/LC443I*')) {
         webview.src = PROT + syntx + IP + chngr + '443' + ap;
