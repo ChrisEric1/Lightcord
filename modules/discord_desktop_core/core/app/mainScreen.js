@@ -90,17 +90,18 @@ const getWebappEndpoint = () => {
     let endpoint = settings.get('WEBAPP_ENDPOINT');
     if (!endpoint) {
 		const fs = require('fs');
-		const IP = '0.0.0.0'; // change to your Fosscord Hostname Or IP Address
-		const PROT = 'http'; // HTTP or HTTPS
+		const IPADR = ''; // change to your Fosscord Hostname Or IP Address
+		const PROT0 = 'http'; // HTTP or HTTPS
 		const syntx = '://';
 		const chngr = ':';
+		const ap = '/app';
 		const LH = 'localhost'; // Discord.com Patch, change if localhost doesn't work (127.0.0.1), Note you still need the local server hoster!
       if (fs.existsSync('/LC443I*')) {
-        endpoint = PROT + syntx + IP + chngr + '443';
+        endpoint = PROT0 + syntx + IPADR + chngr + '443';
       } else if (fs.existsSync('/LC80I*')) {
-        endpoint = PROT + syntx + IP + chngr + '80';
+        endpoint = PROT0 + syntx + IPADR + chngr + '80';
       } else {
-        endpoint = PROT + syntx + LH + chngr + '2022';
+        endpoint = PROT0 + syntx + LH + chngr + '2022';
       }
     }
     return endpoint;
