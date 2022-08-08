@@ -89,12 +89,18 @@ const getWebappEndpoint = () => {
   if(!isTabs){
     let endpoint = settings.get('WEBAPP_ENDPOINT');
     if (!endpoint) {
-      if (_buildInfo.default.releaseChannel === 'stable') {
-        endpoint = 'https://discord.com';
-      } else if (_buildInfo.default.releaseChannel === 'development') {
-        endpoint = 'https://canary.discord.com';
+		const fs = require('fs');
+		const IP = '0.0.0.0'; // change to your Fosscord Hostname Or IP Address
+		const PROT = 'http'; // HTTP or HTTPS
+		const syntx = '://';
+		const chngr = ':';
+		const LH = 'localhost'; // Discord.com Patch, change if localhost doesn't work (127.0.0.1), Note you still need the local server hoster!
+      if (fs.existsSync('/LC443I*')) {
+        endpoint = PROT + syntx + IP + chngr + '443';
+      } else if (fs.existsSync('/LC80I*')) {
+        endpoint = PROT + syntx + IP + chngr + '80';
       } else {
-        endpoint = `https://${_buildInfo.default.releaseChannel}.discord.com`;
+        endpoint = PROT + syntx + LH + chngr + '2022';
       }
     }
     return endpoint;
