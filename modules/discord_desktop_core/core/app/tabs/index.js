@@ -91,19 +91,22 @@ window.onload = () => {
             favicon: faviconURL
         })
         let webview = document.createElement("webview")
-        const fs = require('fs');
-		const IPADR = ''; // change to your Fosscord Hostname Or IP Address
-		const PROT0 = 'http'; // HTTP or HTTPS
-		const syntx = '://';
-		const chngr = ':';
-		const ap = '/app';
-		const LH = 'localhost'; // Discord.com Patch, change if localhost doesn't work (127.0.0.1), Note you still need the local server hoster!
-      if (fs.existsSync('/LC443')) {
-        webview.src = PROT0 + syntx + IPADR + chngr + '443' + ap;
-      } else if (fs.existsSync('/LC80')) {
-        webview.src = PROT0 + syntx + IPADR + chngr + '80' + ap;
+const fs = require('fs');
+const IPADR = ''; // change to your Fosscord Hostname Or IP Address
+const PROT0 = 'http'; // HTTP or HTTPS
+const syntx = '://'; // DO NOT CHANGE!
+const chngr = ':'; // DO NOT CHANGE!
+const ap = '/app'; // DO NOT CHANGE!
+const LH = 'localhost'; // Discord.com Patch, change if localhost doesn't work (127.0.0.1), Note you still need the local server hoster!
+const PORT1 = '80'; // Port 80
+const PORT2 = '443'; // Port 443
+const PORT3 = '2022'; // DO NOT CHANGE!
+      if (fs.existsSync('/LC'+PORT1)) {
+        webview.src = PROT0 + syntx + IPADR + chngr + PORT1 + ap;
+      } else if (fs.existsSync('/LC'+PORT2)) {
+        webview.src = PROT0 + syntx + IPADR + chngr + PORT2 + ap;
       } else {
-        webview.src = PROT0 + syntx + LH + chngr + '2022' + ap;
+        webview.src = PROT0 + syntx + LH + chngr + PORT3 + ap;
       }
         webview.classList.add("discord-webview")
         webview.classList.add("webview-active")
