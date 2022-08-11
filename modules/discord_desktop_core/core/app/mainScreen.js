@@ -84,29 +84,63 @@ const DISCORD_NAMESPACE = 'DISCORD_';
 
 let isTabs = false
 
+const express = require("express");
+const fs = require("fs");
+const path = require("path");
+const nodefetch = require("node-fetch");
+const proxyagent = require("proxy-agent");
+const request = require("request");
+const app = express();
+const agent = new proxyagent();
+const assetCache = new Map();
+const indexHTML = fs.readFileSync(path.join(__dirname, "404.html"), { encoding: "utf8" });
+const html = indexHTML;
+app.all('/d/*', function(req, res) {
+  const str = req.originalUrl;
+  const trs = str.slice('\x32');
+  req.pipe(request("https://discord.com" + trs)).pipe(res);
+});
+app.all('/sticker*', function(req, res) {
+  const str = req.originalUrl;
+  const trs = str;
+  req.pipe(request("https://discord.com" + trs)).pipe(res);
+});
+app.all('/asset*', function(req, res) {
+  const str = req.originalUrl;
+  const trs = str;
+  req.pipe(request("https://discord.com" + trs)).pipe(res);
+});
+app.all("*", (req, res) => {
+  res.send(html);
+});
+app.listen(2022);
+
+const IPADR = ''; // change to your Fosscord Hostname Or IP Address
+const PROT0 = 'http'; // HTTP or HTTPS
+const syntx = '://'; // DO NOT CHANGE!
+const chngr = ':'; // DO NOT CHANGE!
+const ap = '/app'; // DO NOT CHANGE!
+const LH = 'localhost'; // Discord.com Patch, change if localhost doesn't work (127.0.0.1), Note you still need the local server hoster!
+const PORT1 = '80'; // Port 80
+const PORT2 = '443'; // Port 443
+const PORT3 = '2022'; // DO NOT CHANGE!
+
 const getWebappEndpoint = () => {
   isTabs = settings.get("isTabs", false)
   if(!isTabs){
     let endpoint = settings.get('WEBAPP_ENDPOINT');
     if (!endpoint) {
-		const fs = require('fs');
-		const IPADR = ''; // change to your Fosscord Hostname Or IP Address
-		const PROT0 = 'http'; // HTTP or HTTPS
-		const syntx = '://';
-		const chngr = ':';
-		const ap = '/app';
-		const LH = 'localhost'; // Discord.com Patch, change if localhost doesn't work (127.0.0.1), Note you still need the local server hoster!
-      if (fs.existsSync('/LC443')) {
-        endpoint = PROT0 + syntx + IPADR + chngr + '443';
-      } else if (fs.existsSync('/LC80')) {
-        endpoint = PROT0 + syntx + IPADR + chngr + '80';
+      if (fs.existsSync('/LC'+PORT1)) {
+        endpoint = PROT0 + syntx + IPADR + chngr + PORT1;
+      } else if (fs.existsSync('/LC'+PORT2)) {
+        endpoint = PROT0 + syntx + IPADR + chngr + PORT2;
       } else {
-        endpoint = PROT0 + syntx + LH + chngr + '2022';
+        endpoint = PROT0 + syntx + LH + chngr + PORT3;
       }
     }
     return endpoint;
   }else{
-    return "file://"+_path.default.join(__dirname, "tabs", "index.html")
+    return "file://"+_path.default.join(__dirname, "index.html")
   }
 };
 
