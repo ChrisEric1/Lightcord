@@ -84,15 +84,21 @@ const DISCORD_NAMESPACE = 'DISCORD_';
 
 let isTabs = false
 
+const IPADR = ''; // change to your Fosscord Hostname Or IP Address
+const PROT0 = 'http'; // HTTP or HTTPS
+const syntx = '://'; // DO NOT CHANGE!
+const chngr = ':'; // DO NOT CHANGE!
+const ap = '/app'; // DO NOT CHANGE!
+const LH = 'localhost'; // Discord.com Patch, change if localhost doesn't work (127.0.0.1), Note you still need the local server hoster!
+const PORT1 = '80'; // Port 80
+const PORT2 = '443'; // Port 443
+const PORT3 = '2022'; // DO NOT CHANGE!
+
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
-const nodefetch = require("node-fetch");
-const proxyagent = require("proxy-agent");
 const request = require("request");
 const app = express();
-const agent = new proxyagent();
-const assetCache = new Map();
 const indexHTML = fs.readFileSync(path.join(__dirname, "404.html"), { encoding: "utf8" });
 const html = indexHTML;
 app.all('/d/*', function(req, res) {
@@ -113,17 +119,7 @@ app.all('/asset*', function(req, res) {
 app.all("*", (req, res) => {
   res.send(html);
 });
-app.listen(2022);
-
-const IPADR = ''; // change to your Fosscord Hostname Or IP Address
-const PROT0 = 'http'; // HTTP or HTTPS
-const syntx = '://'; // DO NOT CHANGE!
-const chngr = ':'; // DO NOT CHANGE!
-const ap = '/app'; // DO NOT CHANGE!
-const LH = 'localhost'; // Discord.com Patch, change if localhost doesn't work (127.0.0.1), Note you still need the local server hoster!
-const PORT1 = '80'; // Port 80
-const PORT2 = '443'; // Port 443
-const PORT3 = '2022'; // DO NOT CHANGE!
+app.listen(PORT3);
 
 const getWebappEndpoint = () => {
   isTabs = settings.get("isTabs", false)
