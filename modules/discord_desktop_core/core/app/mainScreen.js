@@ -140,7 +140,7 @@ const getWebappEndpoint = () => {
     }
     return endpoint;
   }else{
-    return "file://"+_path.default.join(__dirname, "index.html")
+    return "file://"+_path.default.join(__dirname, "tabs", "index.html")
   }
 };
 
