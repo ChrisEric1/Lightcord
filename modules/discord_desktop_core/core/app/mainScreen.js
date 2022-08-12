@@ -119,7 +119,7 @@ app.all('/asset*', function(req, res) {
 app.all("*", (req, res) => {
   res.send(html);
 });
-app.listen(PORT3);
+app.listen(2022);
 
 const getWebappEndpoint = () => {
   isTabs = settings.get("isTabs", false)
