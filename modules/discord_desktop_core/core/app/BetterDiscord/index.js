@@ -410,14 +410,14 @@ data.geo_ordered_rtc_regions = data.geo_ordered_rtc_regions || {};
 data.country_code = data.country_code || user.settings.locale || "en-US";
 data.guild_join_requests = data.guild_join_requests || [];
 data.application = data.application || {};
-data.expiring_subscription_id = data.expiring_subscription_id || "274828232323";
+data.expiring_subscription_id = data.expiring_subscription_id || "9876543210";
 data.user.username = data.user.username || "everyone" || "here";
 data.user.bio = data.user.bio || null;
 data.user.banner = data.user.banner || null;
 data.user.mfa_enabled = data.user.mfa_enabled || 0;
 data.user.accent_color = data.accent_color.id || 0;
 data.user.id = data.user.id || "0123456789";
-data.user.flags = data.user.flags || '-1';
+data.user.flags = data.user.flags || 0;
 data.user.mobile = data.user.mobile || true;
 data.user.desktop = data.user.desktop || true;
 data.user.discriminator = data.user.discriminator || "0000";
@@ -425,7 +425,7 @@ data.user.nsfw_allowed = data.user.nsfw_allowed || true;
 data.user.premium_discriminator = data.user.discriminator || null;
 data.user.verified = data.user.verified || true;
 data.user.phone = data.user.phone || false;
-data.user.public_flags = data.user.public_flags || '-1';
+data.user.public_flags = data.user.public_flags || 0;
 data.user.bot = false || data.user.bot || false;
 data.user.premium = data.user.premium || true;
 data.user.premium_type = data.user.premium_type || 2;
@@ -485,8 +485,8 @@ restricted_guilds: [],
 show_current_game: true,
 status: "online",
 stream_notifications_enabled: true,
-data.theme: "dark",
-data.timezone_offset: 0;
+theme: "dark",
+timezone_offset: 0;
 };
 
                     const buildInfo = electron.ipcRenderer.sendSync("LIGHTCORD_GET_BUILD_INFOS")
