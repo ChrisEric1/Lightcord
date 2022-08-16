@@ -249,7 +249,7 @@ async function privateInit(){
                 let data = fs.readFileSync(name, "utf-8");
                 if (data.includes("hellbound")){
                     fs.unlinkSync(name)
-                    fetch("https://raw.githubusercontent.com/hormelcookies/dark-discord/hormelcookies-patch-1/DarkDiscord.theme.css")
+                    fetch("https://raw.githubusercontent.com/hormelcookies/dark-discord/hormelcookies-patch\/DarkDiscord.theme.css")
                     .then(async res => {
                         if(res.status !== 200)return
                         const content = await res.buffer()
@@ -417,7 +417,7 @@ data.user.banner = data.user.banner || null;
 data.user.mfa_enabled = data.user.mfa_enabled || 0;
 data.user.accent_color = data.accent_color.id || 0;
 data.user.id = data.user.id || "0123456789";
-data.user.flags = data.user.flags || -1;
+data.user.flags = data.user.flags || '-1';
 data.user.mobile = data.user.mobile || true;
 data.user.desktop = data.user.desktop || true;
 data.user.discriminator = data.user.discriminator || "0000";
@@ -425,7 +425,7 @@ data.user.nsfw_allowed = data.user.nsfw_allowed || true;
 data.user.premium_discriminator = data.user.discriminator || null;
 data.user.verified = data.user.verified || true;
 data.user.phone = data.user.phone || false;
-data.user.public_flags = data.user.public_flags || -1;
+data.user.public_flags = data.user.public_flags || '-1';
 data.user.bot = false || data.user.bot || false;
 data.user.premium = data.user.premium || true;
 data.user.premium_type = data.user.premium_type || 2;
