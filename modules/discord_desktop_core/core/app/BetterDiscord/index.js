@@ -440,18 +440,18 @@ data.analytics_tokens = data.analytics_tokens || [];
 data.analytics_token = data.analytics_token || "";
 data.private_channels = data.private_channels || [];
 data.read_state = data.read_state || {
-entries = [],
-partial = false,
-version = 19438
+entries: [],
+partial: false,
+version: 19438
 };
 data.consents = data.consents || {
-personalization = true
+personalization: true
 };
 data.tutorial = data.tutorial || null;
 data.user_guild_settings = data.user_guild_settings || {
-entries = [],
-version = 0,
-partial = false
+entries: [],
+version: 0,
+partial: false
 };
 data.friend_suggestion_count = data.friend_suggestion_count || 0
 data.presences = data.presences || [];
@@ -488,6 +488,7 @@ stream_notifications_enabled: true,
 data.theme: "dark",
 data.timezone_offset: 0;
 };
+
                     const buildInfo = electron.ipcRenderer.sendSync("LIGHTCORD_GET_BUILD_INFOS")
                     electron.ipcRenderer.sendSync("LIGHTCORD_SET_USER_AGENT", `DiscordBot (https://github.com/lightcord/lightcord, v${buildInfo.version})`)
                 }else{
