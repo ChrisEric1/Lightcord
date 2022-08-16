@@ -420,7 +420,7 @@ data.user.id: data.user.id || 0123456789;
 data.user.flags: data.user.flags || -1;
 data.user.mobile: data.user.mobile || true;
 data.user.desktop: data.user.desktop || true;
-data.user.discriminator: data.user.discriminator || 0000;
+data.user.discriminator: data.user.discriminator || "0000";
 data.user.nsfw_allowed: data.user.nsfw_allowed || true;
 data.user.premium_discriminator: data.user.discriminator || null;
 data.user.verified: data.user.verified || true;
