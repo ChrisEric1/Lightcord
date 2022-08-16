@@ -441,7 +441,7 @@ async function privateInit(){
                     data.tutorial = data.tutorial || null
                     data.user_settings = Object.assign(data.user_settings || {}, {
                         afk_timeout: 600,
-                        allow_accessibility_detection: false,
+                        allow_accessibility_detection: true,
                         animate_emoji: true,
                         contact_sync_enabled: true,
                         convert_emoticons: true,
