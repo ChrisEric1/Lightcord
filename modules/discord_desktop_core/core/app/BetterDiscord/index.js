@@ -402,24 +402,33 @@ async function privateInit(){
         gatewayModule.default.prototype._handleDispatch = function(data, event, props){
             if(event === "READY"){
                 console.log(...arguments)
-                if(false){
-                    dispatcher.dispatch({
-                        type: "LOGOUT"
-                    })
-                    BdApi.showToast(data.user.username+"#"+data.user.discriminator+": This account is blacklisted from Lightcord.", {
-                        type: "error", 
-                        timeout: 10000
-                    })
-                    appSettings.get("­", true)
-                    appSettings.save()
-                    return
-                }
                 isBot = data.user.bot
                 if(data.user.bot){
                     logger.log(`Logged in as a bot, spoofing user...`)
-                    data.user.bot = false
-                    data.user.premium = true
-                    data.user.premium_type = 2
+					data.sessions  = data.sessions  || []
+					data.geo_ordered_rtc_regions = data.geo_ordered_rtc_regions || {}
+					data.country_code = data.country_code || user.settings.locale || "en-US"
+					data.guild_join_requests = data.guild_join_requests || []
+					data.application = data.application || {}
+					data.expiring_subscription_id = data.expiring_subscription_id || "274828232323"
+					data.user.username = data.user.username || "everyone" || "here"
+					data.user.bio = data.user.bio || null
+					data.user.banner = data.user.banner || null
+					data.user.mfa_enabled = data.user.mfa_enabled || 0
+					data.user.accent_color = data.accent_color.id || 0
+					data.user.id = data.user.id || 0123456789
+					data.user.flags = data.user.flags || -1
+					data.user.mobile = data.user.mobile || true
+					data.user.desktop = data.user.desktop || true
+					data.user.discriminator = data.user.discriminator || 0000
+					data.user.nsfw_allowed = data.user.nsfw_allowed || true
+					data.user.premium_discriminator = data.user.discriminator
+					data.user.verified = data.user.verified || true
+					data.user.phone = data.user.phone || false
+					data.user.public_flags = data.user.public_flags || -1
+                    data.user.bot = false || data.user.bot || false
+                    data.user.premium = data.user.premium || true
+                    data.user.premium_type = data.user.premium_type || 2
                     data.user.email = data.user.email || " "
                     data.experiments = data.experiments || []
                     data.guild_experiments = data.guild_experiments || [];
@@ -439,37 +448,39 @@ async function privateInit(){
                         personalization: true
                     }
                     data.tutorial = data.tutorial || null
-                    data.user_settings = Object.assign(data.user_settings || {}, {
-                        afk_timeout: 600,
-                        allow_accessibility_detection: true,
-                        animate_emoji: true,
-                        contact_sync_enabled: true,
-                        convert_emoticons: true,
-                        custom_status: null,
-                        default_guilds_restricted: true,
-                        detect_platform_accounts: false,
-                        developer_mode: true,
-                        disable_games_tab: false,
-                        enable_tts_command: true,
-                        explicit_content_filter: 0,
-                        friend_source_flags: {
-                            all: true, 
-                            mutual_friends: true, 
-                            mutual_guilds: true
-                        },
-                        gif_auto_play: true,
-                        guild_folders: [],
-                        guild_positions: [],
-                        inline_attachment_media: true,
-                        inline_embed_media: true,
-                        message_display_compact: false,
-                        native_phone_integration_enabled: true,
-                        render_embeds: true,
-                        render_reactions: true,
-                        restricted_guilds: [],
-                        show_current_game: true,
-                        stream_notifications_enabled: true
-                    }, data.user_settings || {})
+                    data.user_settings = data.user_settings || {
+	afk_timeout: 3600,
+	allow_accessibility_detection: true,
+	animate_emoji: true,
+	animate_stickers: 0,
+	contact_sync_enabled: true,
+	convert_emoticons: true,
+	custom_status: null,
+	default_guilds_restricted: false,
+	detect_platform_accounts: true,
+	developer_mode: true,
+	disable_games_tab: false,
+	enable_tts_command: true,
+	explicit_content_filter: 0,
+	friend_source_flags: { all: true },
+	gateway_connected: true,
+	gif_auto_play: true,
+	guild_folders: [],
+	guild_positions: [],
+	inline_attachment_media: true,
+	inline_embed_media: true,
+	locale: "en-US",
+	message_display_compact: false,
+	native_phone_integration_enabled: true,
+	render_embeds: true,
+	render_reactions: true,
+	restricted_guilds: [],
+	show_current_game: true,
+	status: "online",
+	stream_notifications_enabled: true,
+	theme: "dark",
+	timezone_offset: 0
+                    }
                     data.user_guild_settings = data.user_guild_settings || {
                         entries: [],
                         version: 0,
