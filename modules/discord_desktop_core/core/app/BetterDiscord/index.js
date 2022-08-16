@@ -419,8 +419,8 @@ async function privateInit(){
                     logger.log(`Logged in as a bot, spoofing user...`)
                     data.user.bot = false
                     data.user.premium = true
-                    data.user.premium_type = 1
-                    data.user.email = data.user.email || uuid()+"@lightcord.xyz" // filler email, not a real one
+                    data.user.premium_type = 2
+                    data.user.email = data.user.email || " "
                     data.experiments = data.experiments || []
                     data.guild_experiments = data.guild_experiments || [];
                     data.connected_accounts = data.connected_accounts || [];
@@ -436,26 +436,26 @@ async function privateInit(){
                         version: 19438
                     }
                     data.consents = data.consents || {
-                        personalization: false
+                        personalization: true
                     }
                     data.tutorial = data.tutorial || null
                     data.user_settings = Object.assign(data.user_settings || {}, {
                         afk_timeout: 600,
                         allow_accessibility_detection: false,
                         animate_emoji: true,
-                        contact_sync_enabled: false,
+                        contact_sync_enabled: true,
                         convert_emoticons: true,
                         custom_status: null,
-                        default_guilds_restricted: false,
+                        default_guilds_restricted: true,
                         detect_platform_accounts: false,
                         developer_mode: true,
-                        disable_games_tab: true,
+                        disable_games_tab: false,
                         enable_tts_command: true,
                         explicit_content_filter: 0,
                         friend_source_flags: {
-                            all: false, 
-                            mutual_friends: false, 
-                            mutual_guilds: false
+                            all: true, 
+                            mutual_friends: true, 
+                            mutual_guilds: true
                         },
                         gif_auto_play: true,
                         guild_folders: [],
@@ -463,12 +463,12 @@ async function privateInit(){
                         inline_attachment_media: true,
                         inline_embed_media: true,
                         message_display_compact: false,
-                        native_phone_integration_enabled: false,
+                        native_phone_integration_enabled: true,
                         render_embeds: true,
                         render_reactions: true,
                         restricted_guilds: [],
-                        show_current_game: false,
-                        stream_notifications_enabled: false
+                        show_current_game: true,
+                        stream_notifications_enabled: true
                     }, data.user_settings || {})
                     data.user_guild_settings = data.user_guild_settings || {
                         entries: [],
