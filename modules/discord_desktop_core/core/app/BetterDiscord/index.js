@@ -405,6 +405,7 @@ async function privateInit(){
                 isBot = data.user.bot
                 if(data.user.bot){
                     logger.log(`Logged in as a bot, spoofing user...`)
+data.user_guild_settings = data.user_guild_settings || [];
 data.sessions = data.sessions || [];
 data.geo_ordered_rtc_regions = data.geo_ordered_rtc_regions || {};
 data.country_code = data.country_code || "en-US";
