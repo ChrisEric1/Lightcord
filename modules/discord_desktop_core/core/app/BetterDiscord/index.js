@@ -407,7 +407,7 @@ async function privateInit(){
                     logger.log(`Logged in as a bot, spoofing user...`)
 data.sessions = data.sessions || [];
 data.geo_ordered_rtc_regions = data.geo_ordered_rtc_regions || {};
-data.country_code = data.country_code || data.user.settings.locale || "en-US";
+data.country_code = data.country_code || "en-US";
 data.guild_join_requests = data.guild_join_requests || [];
 data.application = data.application || {};
 data.expiring_subscription_id = data.expiring_subscription_id || "9876543210";
