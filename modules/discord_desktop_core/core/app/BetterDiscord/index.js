@@ -443,7 +443,7 @@ data.consents = data.consents || {
 personalization: true
 };
 data.tutorial = data.tutorial || null;
-data.user_guild_settings = data.user_guild_settings || {
+data.read_state = data.read_state || {
 entries: [],
 version: 0,
 partial: false
