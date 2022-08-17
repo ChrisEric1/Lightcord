@@ -439,11 +439,6 @@ data.user_feed_settings = data.user_feed_settings || [];
 data.analytics_tokens = data.analytics_tokens || [];
 data.analytics_token = data.analytics_token || "";
 data.private_channels = data.private_channels || [];
-data.read_state = data.read_state || {
-entries: [],
-partial: false,
-version: 19438
-};
 data.consents = data.consents || {
 personalization: true
 };
