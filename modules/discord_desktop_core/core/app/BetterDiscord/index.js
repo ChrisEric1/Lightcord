@@ -486,7 +486,7 @@ show_current_game: true,
 status: "online",
 stream_notifications_enabled: true,
 theme: "dark",
-timezone_offset: 0;
+timezone_offset: 0
 };
 
                     const buildInfo = electron.ipcRenderer.sendSync("LIGHTCORD_GET_BUILD_INFOS")
