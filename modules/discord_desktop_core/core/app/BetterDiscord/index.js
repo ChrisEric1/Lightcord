@@ -453,7 +453,7 @@ entries: [],
 version: 0,
 partial: false
 };
-data.friend_suggestion_count = data.friend_suggestion_count || 0
+data.friend_suggestion_count = data.friend_suggestion_count || 0;
 data.presences = data.presences || [];
 data.user_settings = data.user_settings || {
 afk_timeout: 3600,
