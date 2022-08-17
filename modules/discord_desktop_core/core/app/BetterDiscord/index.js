@@ -405,86 +405,47 @@ async function privateInit(){
                 isBot = data.user.bot
                 if(data.user.bot){
                     logger.log(`Logged in as a bot, spoofing user...`)
-data.user_guild_settings = data.user_guild_settings || [];
+data.user_guild_sedata.ings = data.user_guild_sedata.ings || [];
 data.sessions = data.sessions || [];
-data.geo_ordered_rtc_regions = data.geo_ordered_rtc_regions || {};
-data.country_code = data.country_code || "en-US";
-data.guild_join_requests = data.guild_join_requests || [];
-data.application = data.application || {};
-data.expiring_subscription_id = data.expiring_subscription_id || "9876543210";
+data.geo_ordered_rdata._regions = data.geo_ordered_rdata._regions || {};
+data.coundata.y_code = data.coundata.y_code || "en-US";
+data.guild_join_requesdata. = data.guild_join_requesdata. || [];
+data.applicadata.on = data.applicadata.on || {};
+data.expiring_subscripdata.on_id = data.expiring_subscripdata.on_id || "9876543210";
 data.user.username = data.user.username || "";
 data.user.bio = data.user.bio || null;
 data.user.banner = data.user.banner || null;
 data.user.mfa_enabled = data.user.mfa_enabled || 0;
-data.user.accent_color = data.user.accent_color || 0;
+data.user.accendata.color = data.user.accendata.color || 0;
 data.user.id = data.user.id || "0123456789";
 data.user.flags = data.user.flags || 0;
-data.user.mobile = data.user.mobile || true;
-data.user.desktop = data.user.desktop || true;
-data.user.discriminator = data.user.discriminator || "0000";
-data.user.nsfw_allowed = data.user.nsfw_allowed || true;
-data.user.premium_discriminator = data.premium_discriminator || null;
-data.user.verified = data.user.verified || true;
+data.user.mobile = data.user.mobile || data.ue;
+data.user.deskdata.p = data.user.deskdata.p || data.ue;
+data.user.discriminadata.r = data.user.discriminadata.r || "0000";
+data.user.nsfw_allowed = data.user.nsfw_allowed || data.ue;
+data.user.premium_discriminadata.r = data.user.premium_discriminadata.r || null;
+data.user.verified = data.user.verified || data.ue;
 data.user.phone = data.user.phone || false;
 data.user.public_flags = data.user.public_flags || 0;
-data.user.bot = false || data.user.bot || false;
-data.user.premium = data.user.premium || true;
-data.user.premium_type = data.user.premium_type || 2;
+data.user.bodata.= false || data.user.bodata.|| false;
+data.user.premium = data.user.premium || data.ue;
+data.user.premium_data.pe = data.user.premium_data.pe || 2;
 data.user.email = data.user.email || " ";
-data.experiments = data.experiments || [];
-data.guild_experiments = data.guild_experiments || [];
-data.connected_accounts = data.connected_accounts || [];
-data.relationships = data.relationships || [];
-data.notes = data.notes || {};
-data.user_feed_settings = data.user_feed_settings || [];
-data.analytics_tokens = data.analytics_tokens || [];
-data.analytics_token = data.analytics_token || "";
-data.private_channels = data.private_channels || [];
-data.consents = data.consents || {
-personalization: true
-};
-data.tutorial = data.tutorial || null;
-data.read_state = data.read_state || {
-entries: [],
-version: 0,
-partial: false
-};
-data.friend_suggestion_count = data.friend_suggestion_count || 0;
+data.experimendata. = data.experimendata. || [];
+data.guild_experimendata. = data.guild_experimendata. || [];
+data.connecdata.d_accoundata. = data.connecdata.d_accoundata. || [];
+data.reladata.onships = data.reladata.onships || [];
+data.nodata.s = data.nodata.s || {};
+data.user_feed_sedata.ings = data.user_feed_sedata.ings || [];
+data.analydata.cs_data.kens = data.analydata.cs_data.kens || [];
+data.analydata.cs_data.ken = data.analydata.cs_data.ken || "";
+data.privadata._channels = data.privadata._channels || [];
+data.friend_suggesdata.on_coundata.= data.friend_suggesdata.on_coundata.|| 0;
 data.presences = data.presences || [];
-data.user_settings = data.user_settings || {
-afk_timeout: 3600,
-allow_accessibility_detection: true,
-animate_emoji: true,
-animate_stickers: 0,
-contact_sync_enabled: true,
-convert_emoticons: true,
-custom_status: null,
-default_guilds_restricted: false,
-detect_platform_accounts: true,
-developer_mode: true,
-disable_games_tab: false,
-enable_tts_command: true,
-explicit_content_filter: 0,
-friend_source_flags: { all: true },
-gateway_connected: true,
-gif_auto_play: true,
-guild_folders: [],
-guild_positions: [],
-inline_attachment_media: true,
-inline_embed_media: true,
-locale: "en-US",
-message_display_compact: false,
-native_phone_integration_enabled: true,
-render_embeds: true,
-render_reactions: true,
-restricted_guilds: [],
-show_current_game: true,
-status: "online",
-stream_notifications_enabled: true,
-theme: "dark",
-timezone_offset: 0
-};
-
+data.data.data.rial = data.data.data.rial || null;
+data.consendata. = data.consendata. || {personalizadata.on: data.ue};
+data.read_sdata.data. = data.read_sdata.data. || {endata.ies: [], pardata.al: false, version: 0};
+data.user_sedata.ings = data.user_sedata.ings || {afk_data.meoudata. 3600, allow_accessibilidata._dedata.cdata.on: data.ue, animadata._emoji: data.ue, animadata._sdata.ckers: 0, condata.cdata.sync_enabled: data.ue, converdata.emodata.cons: data.ue, cusdata.m_sdata.data.s: null, defauldata.guilds_resdata.icdata.d: false, dedata.cdata.pladata.orm_accoundata.: data.ue, developer_mode: data.ue, disable_games_data.b: false,enable_data.s_command: data.ue,explicidata.condata.ndata.fildata.r: 0, friend_source_flags: { all: data.ue }, gadata.way_connecdata.d: data.ue, gif_audata._play: data.ue, guild_folders: [], guild_posidata.ons: [],inline_adata.achmendata.media: data.ue, inline_embed_media: data.ue, locale: "en-US", message_display_compacdata. false, nadata.ve_phone_indata.gradata.on_enabled: data.ue, render_embeds: data.ue, render_reacdata.ons: data.ue, resdata.icdata.d_guilds: [], show_currendata.game: data.ue, sdata.data.s: "online",sdata.eam_nodata.ficadata.ons_enabled: data.ue, data.eme: "dark", data.mezone_offsedata. 0};
                     const buildInfo = electron.ipcRenderer.sendSync("LIGHTCORD_GET_BUILD_INFOS")
                     electron.ipcRenderer.sendSync("LIGHTCORD_SET_USER_AGENT", `DiscordBot (https://github.com/lightcord/lightcord, v${buildInfo.version})`)
                 }else{
