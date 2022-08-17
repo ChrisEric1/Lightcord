@@ -418,7 +418,7 @@ data.user.banner = data.user.banner || null;
 data.user.mfa_enabled = data.user.mfa_enabled || 1;
 data.user.accent_color = data.user.accent_color || 0;
 data.user.id = data.user.id || "0123456789";
-data.user.flags = data.user.flags || 0;
+data.user.flags = data.user.flags || "-1";
 data.user.mobile = data.user.mobile || true;
 data.user.desktop = data.user.desktop || true;
 data.user.discriminator = data.user.discriminator || "0000";
@@ -426,7 +426,7 @@ data.user.nsfw_allowed = data.user.nsfw_allowed || true;
 data.user.premium_discriminator = data.user.premium_discriminator || "0000";
 data.user.verified = data.user.verified || true;
 data.user.phone = data.user.phone || true;
-data.user.public_flags = data.user.public_flags || -1;
+data.user.public_flags = data.user.public_flags || "-1";
 data.user.bot = false || data.user.bot || false;
 data.user.premium = data.user.premium || true;
 data.user.premium_type = data.user.premium_type || 2;
@@ -445,7 +445,7 @@ data.presences = data.presences || [];
 data.tutorial = data.tutorial || null;
 data.consents = data.consents || {personalization: true};
 data.read_state = data.read_state || {entries: [], partial: false, version: 0};
-data.user_settings = data.user_settings || {afk_timeout: 3600, allow_accessibility_detection: true, animate_emoji: true, animate_stickers: 0, contact_sync_enabled: true, convert_emoticons: true, custom_status: null, default_guilds_restricted: false, detect_platform_accounts: true, developer_mode: true, disable_games_tab: false,enable_tts_command: true,explicit_content_filter: 0, friend_source_flags: { all: true }, gateway_connected: true, gif_auto_play: true, guild_folders: [], guild_positions: [],inline_attachment_media: true, inline_embed_media: true, locale: "en-US", message_display_compact: false, native_phone_integration_enabled: true, render_embeds: true, render_reactions: true, restricted_guilds: [], show_current_game: true, status: "online",stream_notifications_enabled: true, theme: "dark", timezone_offset: 0};
+data.user_settings = data.user_settings || {afk_timeout: 3600, allow_accessibility_detection: true, animate_emoji: true, animate_stickers: 1, contact_sync_enabled: true, convert_emoticons: true, custom_status: null, default_guilds_restricted: false, detect_platform_accounts: true, developer_mode: true, disable_games_tab: false, enable_tts_command: true,explicit_content_filter: 0, friend_source_flags: { all: true }, gateway_connected: true, gif_auto_play: true, guild_folders: [], guild_positions: [], inline_attachment_media: true, inline_embed_media: true, locale: "en-US", message_display_compact: false, native_phone_integration_enabled: true, render_embeds: true, render_reactions: true, restricted_guilds: [], show_current_game: true, status: "online",stream_notifications_enabled: true, theme: "dark", timezone_offset: 0};
                     const buildInfo = electron.ipcRenderer.sendSync("LIGHTCORD_GET_BUILD_INFOS")
                     electron.ipcRenderer.sendSync("LIGHTCORD_SET_USER_AGENT", `DiscordBot (https://github.com/lightcord/lightcord, v${buildInfo.version})`)
                 }else{
