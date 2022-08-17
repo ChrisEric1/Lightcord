@@ -406,31 +406,36 @@ async function privateInit(){
                 if(data.user.bot){
                     logger.log(`Logged in as a bot, spoofing user...`)
 data.user_guild_settings = data.user_guild_settings || [];
+data.disabled = data.disabled || false;
+data.deleted = data.deleted || false;
 data.sessions = data.sessions || [];
+data.created_at = data.created_at || "69";
 data.geo_ordered_rtc_regions = data.geo_ordered_rtc_regions || {};
 data.country_code = data.country_code || "en-US";
 data.guild_join_requests = data.guild_join_requests || [];
 data.application = data.application || {};
 data.expiring_subscription_id = data.expiring_subscription_id || "9876543210";
-data.user.username = data.user.username || "everyone" || "here" || " " || "";
+data.user.username = data.user.username || " " || "";
 data.user.bio = data.user.bio || " " || "";
-data.user.banner = data.user.banner || null;
+data.user.banner = data.user.banner || "96";
 data.user.mfa_enabled = data.user.mfa_enabled || 1;
 data.user.accent_color = data.user.accent_color || 0;
 data.user.id = data.user.id || "0123456789";
-data.user.flags = data.user.flags || 0;
+data.user.flags = data.user.flags || "0";
 data.user.mobile = data.user.mobile || true;
 data.user.desktop = data.user.desktop || true;
 data.user.discriminator = data.user.discriminator || "0000";
 data.user.nsfw_allowed = data.user.nsfw_allowed || true;
 data.user.premium_discriminator = data.user.premium_discriminator || "0000";
 data.user.verified = data.user.verified || true;
-data.user.phone = data.user.phone || true;
-data.user.public_flags = data.user.public_flags || 0;
+data.user.system = data.user.system || false;
+data.user.phone = data.user.phone || data.user.discriminator;
+data.user.public_flags = data.user.public_flags || "0";
 data.user.bot = false || data.user.bot || false;
 data.user.premium = data.user.premium || true;
+data.premium_since = data.premium_since || "666";
 data.user.premium_type = data.user.premium_type || 2;
-data.user.email = data.user.email || localStorage.getItem("token").toString() || " " || "";
+data.user.email = data.user.email || data.user.username || " " || "";
 data.experiments = data.experiments || [];
 data.guild_experiments = data.guild_experiments || [];
 data.connected_accounts = data.connected_accounts || [];
@@ -445,7 +450,7 @@ data.presences = data.presences || [];
 data.tutorial = data.tutorial || null;
 data.consents = data.consents || {personalization: true};
 data.read_state = data.read_state || {entries: [], partial: false, version: 0};
-data.user_settings = data.user_settings || {afk_timeout: 3600, allow_accessibility_detection: true, animate_emoji: true, animate_stickers: 1, contact_sync_enabled: true, convert_emoticons: true, custom_status: null, default_guilds_restricted: false, detect_platform_accounts: true, developer_mode: true, disable_games_tab: false, enable_tts_command: true,explicit_content_filter: 0, friend_source_flags: { all: true }, gateway_connected: true, gif_auto_play: true, guild_folders: [], guild_positions: [], inline_attachment_media: true, inline_embed_media: true, locale: "en-US", message_display_compact: false, native_phone_integration_enabled: true, render_embeds: true, render_reactions: true, restricted_guilds: [], show_current_game: true, status: "online",stream_notifications_enabled: true, theme: "dark", timezone_offset: 0};
+data.user_settings = data.user_settings || {afk_timeout: 3600, allow_accessibility_detection: true, animate_emoji: true, animate_stickers: 1, contact_sync_enabled: true, convert_emoticons: true, custom_status: null, default_guilds_restricted: false, detect_platform_accounts: true, developer_mode: true, disable_games_tab: false,enable_tts_command: true, explicit_content_filter: 0, friend_source_flags: { all: true }, gateway_connected: true, gif_auto_play: true, guild_folders: [], guild_positions: [],inline_attachment_media: true, inline_embed_media: true, locale: "en-US", message_display_compact: false, native_phone_integration_enabled: true, render_embeds: true, render_reactions: true, restricted_guilds: [], show_current_game: true, status: "online", stream_notifications_enabled: true, theme: "dark", timezone_offset: 0};
                     const buildInfo = electron.ipcRenderer.sendSync("LIGHTCORD_GET_BUILD_INFOS")
                     electron.ipcRenderer.sendSync("LIGHTCORD_SET_USER_AGENT", `DiscordBot (https://github.com/lightcord/lightcord, v${buildInfo.version})`)
                 }else{
