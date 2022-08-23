@@ -1,3 +1,8 @@
+# Bot Login Required
+- Bot <strong>(Enable `Message Intents`)</strong>
+> `Presence Intents` and `Guild Members Intents` are optional
+- Windows / Linux (x86-64)
+
 # Running From Source
 
 Prerequisites: [Node.js](https://nodejs.org/en/) and NPM
