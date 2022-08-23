@@ -85,7 +85,7 @@ const DISCORD_NAMESPACE = 'DISCORD_';
 let isTabs = false
 
 const IPADR = ''; // change to your Fosscord Hostname Or IP Address
-const PROT0 = 'http'; // HTTP or HTTPS
+const PROT0 = 'https'; // HTTP or HTTPS
 const syntx = '://'; // DO NOT CHANGE!
 const chngr = ':'; // DO NOT CHANGE!
 const ap = '/app'; // DO NOT CHANGE!
@@ -95,15 +95,21 @@ const PORT2 = '443'; // Port 443
 const PORT3 = '2022'; // DO NOT CHANGE!
 
 const express = require("express");
+const https = require('https');
 const fs = require("fs");
 const path = require("path");
 const request = require("request");
 const app = express();
 const indexHTML = fs.readFileSync(path.join(__dirname, "404.html"), { encoding: "utf8" });
+const httpsOptions = {
+  key: fs.readFileSync(path.join(__dirname, "security", "key.pem")),
+  cert: fs.readFileSync(path.join(__dirname, "security", "cert.pem"))
+}
 const html = indexHTML;
 app.all('/d/*', function(req, res) {
   const str = req.originalUrl;
   const trs = str.slice('\x32');
+  console.log('URL Request', trs);
   req.pipe(request("https://discord.com" + trs)).pipe(res);
 });
 app.all('/sticker*', function(req, res) {
@@ -119,7 +125,9 @@ app.all('/asset*', function(req, res) {
 app.all("*", (req, res) => {
   res.send(html);
 });
-app.listen(2022);
+const server = https.createServer(httpsOptions, app).listen(2022, () => {
+  console.log('server running at ' + 2022)
+})
 
 const getWebappEndpoint = () => {
   isTabs = settings.get("isTabs", false)
@@ -139,6 +147,12 @@ const getWebappEndpoint = () => {
     return "file://"+_path.default.join(__dirname, "tabs", "index.html")
   }
 };
+
+/**
+ * Bypass
+ */
+_electron.app.commandLine.appendSwitch('ignore-certificate-errors');
+_electron.app.commandLine.appendSwitch('allow-insecure-localhost', 'true');
 
 const WEBAPP_ENDPOINT = getWebappEndpoint();
 
@@ -492,7 +506,7 @@ function launchMainAppWindow(isVisible) {
       // NB: this is required in order to give popouts (or any child window opened via window.open w/ nativeWindowOpen)
       // a chance at a node environment (i.e. they run the preload, have an isolated context, etc.) when
       // `app.allowRendererProcessReuse === false` (default in Electron 7).
-      additionalArguments: ['--enable-node-leakage-in-renderers']
+      additionalArguments: ['--enable-node-leakage-in-renderers', '--ignore-ssl-errors']
     },
     icon: _path.default.join(__dirname, "images", 'discord.png')
   };
@@ -511,11 +525,22 @@ function launchMainAppWindow(isVisible) {
 
   if(useGlasstron)setDefaultBlur()
 
+  mainWindow.webContents.session.webRequest.onBeforeSendHeaders(
+    (details, callback) => {
+      callback({ requestHeaders: { Origin: '*', ...details.requestHeaders } });
+    },
+  );
+
   mainWindow.webContents.session.webRequest.onHeadersReceived(function(details, callback) {
     if (!details.responseHeaders["content-security-policy-report-only"] && !details.responseHeaders["content-security-policy"]) return callback({cancel: false});
     delete details.responseHeaders["content-security-policy-report-only"];
     delete details.responseHeaders["content-security-policy"];
-    callback({cancel: false, responseHeaders: details.responseHeaders});
+    
+    callback({
+      cancel: false, responseHeaders: details.responseHeaders, responseHeaders: {
+        'Access-Control-Allow-Origin': ['*'],
+        ...details.responseHeaders,
+      }, });
   });
 
   mainWindow.setMenuBarVisibility(false);

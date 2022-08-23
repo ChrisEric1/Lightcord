@@ -235,4 +235,5 @@ function awaitLogin():Promise<void>{
 window.Lightcord.DiscordModules.dispatcher.subscribe("LOGOUT", (ev) => {
     hasCompletedLogin = false
     loginPromise = undefined
+    console.log('Logout Patchers.ts', ev)
 })

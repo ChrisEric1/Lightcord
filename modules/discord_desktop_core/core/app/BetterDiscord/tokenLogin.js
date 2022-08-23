@@ -38,7 +38,7 @@ class TokenLogin extends React.Component {
     })), /*#__PURE__*/React.createElement("button", {
       type: "submit",
       className: `${marginModule.marginBottom8} ${authBoxModule.button} ${contentModule.button} ${contentModule.lookFilled} ${contentModule.colorBrand} ${contentModule.sizeLarge} ${contentModule.fullWidth} ${contentModule.grow}`,
-      onClick: () => {
+      onClick: (ev) => {
         if (!this.refs.input.state.value) {
           this.refs.input.setState({
             error: "This field is necessary"

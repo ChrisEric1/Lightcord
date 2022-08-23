@@ -47,7 +47,7 @@ export default class User extends BaseStructure {
             avatar: this.avatar,
             bot: this.bot,
             discriminator: this.discriminator
-        }, "png", 4096)
+        }, this.avatar?.startsWith('a_') ? "gif" : "png", 4096)
     }
 
     get dmChannel(){

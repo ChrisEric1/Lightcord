@@ -1,4 +1,4 @@
-const native = require('./discord_media_'+process.platform+'.node');
+const native = require('./discord_media.node');
 
 module.exports = {
   getSystemAnalyticsBlob() {
