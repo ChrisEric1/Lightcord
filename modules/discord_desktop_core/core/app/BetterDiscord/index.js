@@ -545,6 +545,64 @@ async function privateInit() {
             cancelGatewayPrototype("streamDelete")
             cancelGatewayPrototype("streamSetPaused")
 
+            window.setStatus = (status) => {
+                if (!['online', 'idle', 'dnd', 'invisible'].includes(status)) throw new Error('Invalid status [Must be one of online, idle, dnd, invisible]');
+                window.ws.send.call(window.ws, 3, {
+                    status,
+                    afk: false,
+                    activities: [],
+                    since: 0,
+                });
+                window._handleDispatch.call(window.ws, { status }, 'USER_SETTINGS_UPDATE');
+            }
+
+            window.setPresence = ({ name, type = 0, status = 'online', url }) => {
+                if (!name || typeof name !== 'string') throw new Error('Invalid presence name [Must be a string]');
+                const typeConstants = {
+                    PLAYING: 0,
+                    STREAMING: 1,
+                    LISTENING: 2,
+                    WATCHING: 3,
+                    0: 'PLAYING',
+                    1: 'STREAMING',
+                    2: 'LISTENING',
+                    3: 'WATCHING',
+                }
+                if (!typeConstants[type]) throw new Error('Invalid presence type [Must be one of PLAYING, STREAMING, LISTENING, WATCHING]');
+                if (typeof type == 'string') type = typeConstants[type];
+                if (!['online', 'idle', 'dnd', 'invisible'].includes(status)) throw new Error('Invalid status [Must be one of online, idle, dnd, invisible]');
+                if (type == 1 && typeof url !== 'string') throw new Error('Invalid presence url [Must be a string]');
+                window.ws.send.call(window.ws, 3, {
+                    status: status,
+                    afk: false,
+                    activities: [{
+                        name: name,
+                        type: type,
+                        url: url,
+                    }],
+                    since: 0,
+                });
+                window._handleDispatch.call(window.ws, { status }, 'USER_SETTINGS_UPDATE');
+            }
+
+            window.setTheme = (theme) => {
+                if (!['dark', 'light'].includes(theme)) throw new Error('Invalid theme [Must be one of dark, light]');
+                window._handleDispatch.call(window.ws, { theme }, 'USER_SETTINGS_UPDATE');
+            }
+
+            window.setLanguage = (language) => {
+                if (!['da', 'de', 'en-GB', 'en-US', 'es-ES', 'fr', 'hr', 'it', 'lt',
+                    'hu', 'nl', 'no', 'pl', 'pt-BR', 'ro', 'fi', 'sv-SE', 'vi',
+                    'tr', 'cs', 'el', 'bg', 'ru', 'uk', 'hi', 'th', 'zh-CN', 'ja', 'zh-TW', 'ko']
+                    .includes(language)) throw new Error('Invalid language [See here: https://discord.com/developers/docs/reference#locales]');
+                window._handleDispatch.call(window.ws, { locale: language }, 'USER_SETTINGS_UPDATE');
+            }
+
+            window.setCompactMode = (enable) => {
+                if(typeof enable !== 'boolean') throw new Error('Invalid compact mode [Must be a boolean]');
+                window._handleDispatch.call(window.ws, { message_display_compact: enable }, 'USER_SETTINGS_UPDATE');
+            }
+
             const handlerSetStatus = function () {
                 const avatar = document.querySelectorAll("[class^=avatarWrapper]")[0];
                 if (!avatar) return false;
@@ -552,44 +610,16 @@ async function privateInit() {
                 avatar.addEventListener('click', async () => {
                     await new Promise(resolve => setTimeout(resolve, 100))
                     document.getElementById('status-picker-online').addEventListener('click', function () {
-                        console.log('click online')
-                        window.ws.send.call(window.ws, 3, {
-                            status: 'online',
-                            afk: false,
-                            activities: [],
-                            since: 0,
-                        });
-                        window._handleDispatch.call(window.ws, { status: 'online' }, 'USER_SETTINGS_UPDATE')
+                        window.setStatus('online');
                     });
                     document.getElementById('status-picker-idle').addEventListener('click', function () {
-                        console.log('click idle')
-                        window.ws.send.call(window.ws, 3, {
-                            status: 'idle',
-                            afk: false,
-                            activities: [],
-                            since: 0,
-                        });
-                        window._handleDispatch.call(window.ws, { status: 'idle' }, 'USER_SETTINGS_UPDATE')
+                        window.setStatus('idle');
                     });
                     document.getElementById('status-picker-dnd').addEventListener('click', function () {
-                        console.log('click dnd')
-                        window.ws.send.call(window.ws, 3, {
-                            status: 'dnd',
-                            afk: false,
-                            activities: [],
-                            since: 0,
-                        });
-                        window._handleDispatch.call(window.ws, { status: 'dnd' }, 'USER_SETTINGS_UPDATE')
+                        window.setStatus('dnd');
                     });
                     document.getElementById('status-picker-invisible').addEventListener('click', function () {
-                        console.log('click invisible')
-                        window.ws.send.call(window.ws, 3, {
-                            status: 'invisible',
-                            afk: false,
-                            activities: [],
-                            since: 0,
-                        });
-                        window._handleDispatch.call(window.ws, { status: 'invisible' }, 'USER_SETTINGS_UPDATE')
+                        window.setStatus('invisible');
                     });
                 });
                 return true;
