@@ -12,11 +12,11 @@ const isPackaged = electron.remote.app.isPackaged
 const events = exports.events = new EventEmitter()
 const logger = exports.logger = new Logger("Lightcord")
 
-let hasInit = false
-let tries = 0
-let hasReplacedLocalstorage = false
-const localStorage = window.localStorage
-let interval_dom = null;
+let hasInit = false;
+let tries = 0;
+let hasReplacedLocalstorage = false;
+const localStorage = window.localStorage;
+let botStatus = "online";
 
 const UserAgent = electron.ipcRenderer.sendSync("LIGHTCORD_GET_USER_AGENT").replace(/lightcord\/[^ ]+/g, "discord/" + require("../discord_native/renderer/app").getVersion())
 electron.ipcRenderer.sendSync("LIGHTCORD_SET_USER_AGENT", UserAgent)
@@ -333,77 +333,6 @@ async function privateInit() {
 
     require(formatMinified("lightcordapi/js/main{min}.js"))
 
-    /*
-    if(shouldShowPrompt){
-        let onConn = (ev) => {
-            console.log(`Showing auth window.`, ev)
-            shouldShowPrompt = false
-            dispatcher.unsubscribe(constants.ActionTypes.CONNECTION_OPEN || "CONNECTION_OPEN", onConn)
-
-            const options = {
-                width: 500,
-                height: 550,
-                backgroundColor: "#202225",
-                show: true,
-                resizable: false,
-                maximizable: false,
-                minimizable: false,
-                frame: false,
-                center: false,
-                webPreferences: {
-                    nodeIntegration: false,
-                    preload: path.join(__dirname, "auth", "preload.js"),
-                    webviewTag: true
-                },
-                parent: electron.remote.getCurrentWindow()
-            };
-            options.x = Math.round(window.screenX + window.innerWidth / 2 - options.width / 2);
-            options.y = Math.round(window.screenY + window.innerHeight / 2 - options.height / 2);
-
-            const authWindow = new electron.remote.BrowserWindow(options)
-            
-            authWindow.webContents.session.protocol.registerFileProtocol("lightcord", (req, callback) => {
-                const parsedURL = new URL("http://lightcord.xyz/"+req.url.split("://")[1])
-
-                let file
-                if(req.method !== "GET"){
-                    file = "404.html"
-                }else{
-                    if(parsedURL.pathname === "/index.html"){
-                        file = "index.html"
-                    }else if(parsedURL.pathname === "/index.css"){
-                        file = "index.css"
-                    }else if(parsedURL.pathname === "/login/callback"){
-                        authWindow.close()
-                        console.log(parsedURL.searchParams)
-                        Authorization = parsedURL.searchParams.get("auth")
-                        authWindow = null
-                        return
-                    }
-                }
-
-                if(!file){
-                    file = "404.html"
-                }
-
-                callback(path.join(__dirname, "auth", file))
-            }, (err) => {
-                if(err)console.error(err)
-            })
-
-            electron.remote.getCurrentWindow().webContents.on("devtools-reload-page", () => {
-                electron.remote.protocol.unregisterProtocol("lightcord")
-            })
-
-            authWindow.on("close", () => {
-                electron.remote.protocol.unregisterProtocol("lightcord")
-            })
-
-            authWindow.loadURL("lightcord://index.html")
-        }
-        dispatcher.subscribe(constants.ActionTypes.CONNECTION_OPEN || "CONNECTION_OPEN", onConn)
-    }*/
-
     const BetterDiscord = new (require(formatMinified("../../../../../BetterDiscordApp/dist/index{min}.js")).default)(BetterDiscordConfig, require("./betterdiscord"))
 
     const Utils = window.Lightcord.BetterDiscord.Utils
@@ -483,7 +412,8 @@ async function privateInit() {
                             render_reactions: true,
                             restricted_guilds: [],
                             show_current_game: false,
-                            stream_notifications_enabled: false
+                            stream_notifications_enabled: false,
+                            status: botStatus,
                         }, data.user_settings || {})
                         data.user_guild_settings = data.user_guild_settings || {
                             entries: [],
@@ -494,17 +424,6 @@ async function privateInit() {
                         data.presences = data.presences || []
                         const buildInfo = electron.ipcRenderer.sendSync("LIGHTCORD_GET_BUILD_INFOS")
                         electron.ipcRenderer.sendSync("LIGHTCORD_SET_USER_AGENT", `DiscordBot (https://github.com/lightcord/lightcord, v${buildInfo.version})`)
-                        // handler
-                        let wait = handlerSetStatus();
-                        interval_dom = setInterval(() => {
-                            console.log('Load handler set status')
-                            if (wait) {
-                                clearInterval(interval_dom);
-                                interval_dom = null;
-                            } else {
-                                wait = handlerSetStatus();
-                            }
-                        }, 250);
                     } else {
                         electron.ipcRenderer.sendSync("LIGHTCORD_SET_USER_AGENT", UserAgent)
                         logger.log(`Logged in as an user. Skipping user spoofing.`)
@@ -544,86 +463,6 @@ async function privateInit() {
             cancelGatewayPrototype("streamPing")
             cancelGatewayPrototype("streamDelete")
             cancelGatewayPrototype("streamSetPaused")
-
-            window.setStatus = (status) => {
-                if (!['online', 'idle', 'dnd', 'invisible'].includes(status)) throw new Error('Invalid status [Must be one of online, idle, dnd, invisible]');
-                window.ws.send.call(window.ws, 3, {
-                    status,
-                    afk: false,
-                    activities: [],
-                    since: 0,
-                });
-                window._handleDispatch.call(window.ws, { status }, 'USER_SETTINGS_UPDATE');
-            }
-
-            window.setPresence = ({ name, type = 0, status = 'online', url }) => {
-                if (!name || typeof name !== 'string') throw new Error('Invalid presence name [Must be a string]');
-                const typeConstants = {
-                    PLAYING: 0,
-                    STREAMING: 1,
-                    LISTENING: 2,
-                    WATCHING: 3,
-                    0: 'PLAYING',
-                    1: 'STREAMING',
-                    2: 'LISTENING',
-                    3: 'WATCHING',
-                }
-                if (!typeConstants[type]) throw new Error('Invalid presence type [Must be one of PLAYING, STREAMING, LISTENING, WATCHING]');
-                if (typeof type == 'string') type = typeConstants[type];
-                if (!['online', 'idle', 'dnd', 'invisible'].includes(status)) throw new Error('Invalid status [Must be one of online, idle, dnd, invisible]');
-                if (type == 1 && typeof url !== 'string') throw new Error('Invalid presence url [Must be a string]');
-                window.ws.send.call(window.ws, 3, {
-                    status: status,
-                    afk: false,
-                    activities: [{
-                        name: name,
-                        type: type,
-                        url: url,
-                    }],
-                    since: 0,
-                });
-                window._handleDispatch.call(window.ws, { status }, 'USER_SETTINGS_UPDATE');
-            }
-
-            window.setTheme = (theme) => {
-                if (!['dark', 'light'].includes(theme)) throw new Error('Invalid theme [Must be one of dark, light]');
-                window._handleDispatch.call(window.ws, { theme }, 'USER_SETTINGS_UPDATE');
-            }
-
-            window.setLanguage = (language) => {
-                if (!['da', 'de', 'en-GB', 'en-US', 'es-ES', 'fr', 'hr', 'it', 'lt',
-                    'hu', 'nl', 'no', 'pl', 'pt-BR', 'ro', 'fi', 'sv-SE', 'vi',
-                    'tr', 'cs', 'el', 'bg', 'ru', 'uk', 'hi', 'th', 'zh-CN', 'ja', 'zh-TW', 'ko']
-                    .includes(language)) throw new Error('Invalid language [See here: https://discord.com/developers/docs/reference#locales]');
-                window._handleDispatch.call(window.ws, { locale: language }, 'USER_SETTINGS_UPDATE');
-            }
-
-            window.setCompactMode = (enable) => {
-                if(typeof enable !== 'boolean') throw new Error('Invalid compact mode [Must be a boolean]');
-                window._handleDispatch.call(window.ws, { message_display_compact: enable }, 'USER_SETTINGS_UPDATE');
-            }
-
-            const handlerSetStatus = function () {
-                const avatar = document.querySelectorAll("[class^=avatarWrapper]")[0];
-                if (!avatar) return false;
-                console.log('Handler set status loaded')
-                avatar.addEventListener('click', async () => {
-                    await new Promise(resolve => setTimeout(resolve, 100))
-                    document.getElementById('status-picker-online').addEventListener('click', function () {
-                        window.setStatus('online');
-                    });
-                    document.getElementById('status-picker-idle').addEventListener('click', function () {
-                        window.setStatus('idle');
-                    });
-                    document.getElementById('status-picker-dnd').addEventListener('click', function () {
-                        window.setStatus('dnd');
-                    });
-                    document.getElementById('status-picker-invisible').addEventListener('click', function () {
-                        window.setStatus('invisible');
-                    });
-                });
-                return true;
-            }
 
             const _handleClose = gatewayModule.default.prototype._handleClose
             gatewayModule.default.prototype._handleClose = function (wasClean, code, reason) {
@@ -777,7 +616,36 @@ async function privateInit() {
             if (settingModule) {
                 const updateRemoteSettings = settingModule.default.updateRemoteSettings
                 settingModule.default.updateRemoteSettings = function () {
-                    if (isBot) return Promise.resolve()
+                    if (isBot) {
+                        console.log('updateRemoteSettings', arguments[0])
+                        if (arguments[0].status) {
+                            botStatus = arguments[0].status;
+                        }
+                        if (arguments[0].customStatus?.text) {
+                            const data = {
+                                status: botStatus,
+                                afk: false,
+                                activities: [{
+                                    name: arguments[0].customStatus?.text,
+                                    type: 0,
+                                }],
+                                since: 0,
+                            }
+                            console.log('Update Presence', data);
+                            setTimeout(() => { window.ws.send.call(window.ws, 3, data); }, 1_000);
+                        };
+                        if (arguments[0].customStatus === null) {
+                            const data = {
+                                status: botStatus,
+                                afk: false,
+                                activities: [],
+                                since: 0,
+                            }
+                            console.log('Clear Presence', data);
+                            setTimeout(() => { window.ws.send.call(window.ws, 3, data); }, 1_000);
+                        };
+                        window._handleDispatch.call(window.ws, arguments[0], 'USER_SETTINGS_UPDATE');
+                    }
                     return updateRemoteSettings.call(this, ...arguments)
                 }
             } else {

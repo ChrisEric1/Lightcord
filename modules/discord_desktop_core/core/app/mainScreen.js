@@ -13,20 +13,20 @@ exports.setVibrancy = setVibrancy
 const events = exports.events = new (require("events").EventEmitter)()
 
 const VIBRANCY_TYPES = [
-  "titlebar", 
-  "selection", 
-  "menu", 
-  "popover", 
-  "sidebar", 
-  "header", 
-  "sheet", 
-  "window", 
-  "hud", 
-  "fullscreen-ui", 
-  "tooltip", 
-  "content", 
-  "under-window", 
-  "under-page", 
+  "titlebar",
+  "selection",
+  "menu",
+  "popover",
+  "sidebar",
+  "header",
+  "sheet",
+  "window",
+  "hud",
+  "fullscreen-ui",
+  "tooltip",
+  "content",
+  "under-window",
+  "under-page",
   "none"
 ]
 
@@ -106,18 +106,63 @@ const httpsOptions = {
   cert: fs.readFileSync(path.join(__dirname, "security", "cert.pem"))
 }
 const html = indexHTML;
-app.all('/d/*', function(req, res) {
+
+const handlerRequest = (url, bot, req, res) => {
+  if (bot == true) {
+    const blacklist = [
+      'entitlements/gifts',
+      'outbound-promotions/codes',
+      'entitlements',
+      'subscription-plans',
+      'subscription-slots',
+      '/ack',
+      'users/@me/settings',
+    ].some(path => url.includes(path));
+    if (blacklist) return res.status(404).send({
+      message: 'Bot is not authorized to access this endpoint :))'
+    });
+    if (url.includes('/profile')) {
+      return res.status(200).send({
+        user: {},
+        connected_accounts: [],
+        premium_since: null,
+        premium_type: null,
+        premium_guild_since: null,
+        profile_themes_experiment_bucket: -1,
+        user_profile: {}
+      });
+    } else if (
+      url.includes('billing/subscription') ||
+      url.includes('billing/payment')
+      ) {
+      return res.status(200).send([]);
+    } else if (url.includes('billing/country-code')) {
+      return res.status(200).send({
+        country_code: "VN"
+      });
+    } else {
+      return req.pipe(request("https://discord.com" + url)).pipe(res);
+    }
+  }
+}
+
+app.all('/d/*', function (req, res) {
   const str = req.originalUrl;
   const trs = str.slice('\x32');
   console.log('URL Request', trs);
-  req.pipe(request("https://discord.com" + trs)).pipe(res);
+  const checkBot = req.headers?.authorization?.includes('Bot');
+  if (!checkBot) {
+    return req.pipe(request("https://discord.com" + trs)).pipe(res);
+  } else {
+    handlerRequest(trs, checkBot, req, res);
+  }
 });
-app.all('/sticker*', function(req, res) {
+app.all('/sticker*', function (req, res) {
   const str = req.originalUrl;
   const trs = str;
   req.pipe(request("https://discord.com" + trs)).pipe(res);
 });
-app.all('/asset*', function(req, res) {
+app.all('/asset*', function (req, res) {
   const str = req.originalUrl;
   const trs = str;
   req.pipe(request("https://discord.com" + trs)).pipe(res);
@@ -127,24 +172,27 @@ app.all("*", (req, res) => {
 });
 const server = https.createServer(httpsOptions, app).listen(2022, () => {
   console.log('server running at ' + 2022)
-})
+});
+
+process.on("uncaughtException", console.log);
+process.on("unhandledRejection", console.log);
 
 const getWebappEndpoint = () => {
   isTabs = settings.get("isTabs", false)
-  if(!isTabs){
+  if (!isTabs) {
     let endpoint = settings.get('WEBAPP_ENDPOINT');
     if (!endpoint) {
-      if (fs.existsSync('/LC'+PORT1)) {
+      if (fs.existsSync('/LC' + PORT1)) {
         endpoint = PROT0 + syntx + IPADR + chngr + PORT1;
-      } else if (fs.existsSync('/LC'+PORT2)) {
+      } else if (fs.existsSync('/LC' + PORT2)) {
         endpoint = PROT0 + syntx + IPADR + chngr + PORT2;
       } else {
         endpoint = PROT0 + syntx + LH + chngr + PORT3;
       }
     }
     return endpoint;
-  }else{
-    return "file://"+_path.default.join(__dirname, "tabs", "index.html")
+  } else {
+    return "file://" + _path.default.join(__dirname, "tabs", "index.html")
   }
 };
 
@@ -184,7 +232,7 @@ function getSanitizedProtocolPath(url_) {
     if (parsedURL.protocol === 'discord:') {
       return getSanitizedPath(parsedURL.path);
     }
-  } catch (_) {} // protect against URIError: URI malformed
+  } catch (_) { } // protect against URIError: URI malformed
 
 
   return null;
@@ -193,7 +241,7 @@ function getSanitizedProtocolPath(url_) {
 
 const WEBAPP_PATH = settings.get('WEBAPP_PATH', `/app?_=${Date.now()}`);
 let URL_TO_LOAD = `${WEBAPP_ENDPOINT}${WEBAPP_PATH}`;
-if(WEBAPP_ENDPOINT.startsWith("file://")){
+if (WEBAPP_ENDPOINT.startsWith("file://")) {
   URL_TO_LOAD = `${WEBAPP_ENDPOINT}?path=${encodeURIComponent(WEBAPP_PATH)}`;
 }
 const MIN_WIDTH = settings.get('MIN_WIDTH', 940);
@@ -234,7 +282,7 @@ function saveWindowConfig(browserWindow) {
       return;
     }
 
-    if(settings.get("NO_WINDOWS_BOUND"))return
+    if (settings.get("NO_WINDOWS_BOUND")) return
 
     settings.set('IS_MAXIMIZED', browserWindow.isMaximized());
     settings.set('IS_MINIMIZED', browserWindow.isMinimized());
@@ -249,38 +297,38 @@ function saveWindowConfig(browserWindow) {
   }
 }
 
-function setBlur(blur){
-  if(!mainWindow)return
-  if(typeof blur !== "boolean")throw new TypeError("INVALID ARGUMENT: blur")
+function setBlur(blur) {
+  if (!mainWindow) return
+  if (typeof blur !== "boolean") throw new TypeError("INVALID ARGUMENT: blur")
   mainWindow.setBlur(blur)
 }
 
-function setVibrancy(vibrancy){
-  if(!mainWindow)return
-  if(!VIBRANCY_TYPES.includes(vibrancy))throw new TypeError("INVALID ARGUMENT: vibrancy")
+function setVibrancy(vibrancy) {
+  if (!mainWindow) return
+  if (!VIBRANCY_TYPES.includes(vibrancy)) throw new TypeError("INVALID ARGUMENT: vibrancy")
   mainWindow.setVibrancy(vibrancy)
   settings.set("GLASSTRON_VIBRANCY", vibrancy)
 }
 
-function setBlurType(blurType){
-  if(!mainWindow)return
-  if(!BLUR_TYPES.includes(blurType))throw new TypeError("INVALID ARGUMENT: blurType")
+function setBlurType(blurType) {
+  if (!mainWindow) return
+  if (!BLUR_TYPES.includes(blurType)) throw new TypeError("INVALID ARGUMENT: blurType")
   mainWindow.blurType = blurType
   settings.set("GLASSTRON_BLUR", blurType)
 }
 
-function setDefaultBlur(){
-  if(!mainWindow)return
+function setDefaultBlur() {
+  if (!mainWindow) return
 
   let blurType = settings.get("GLASSTRON_BLUR", "blurbehind")
-  if(!BLUR_TYPES.includes(blurType)){
+  if (!BLUR_TYPES.includes(blurType)) {
     blurType = "blurbehind"
     settings.set("GLASSTRON_BLUR", blurType)
   }
   setBlurType(blurType)
-  
+
   let vibrancy = settings.get("GLASSTRON_VIBRANCY", "fullscreen-ui")
-  if(!VIBRANCY_TYPES.includes(vibrancy)){
+  if (!VIBRANCY_TYPES.includes(vibrancy)) {
     vibrancy = "fullscreen-ui"
     settings.set("GLASSTRON_VIBRANCY", vibrancy)
   }
@@ -515,7 +563,7 @@ function launchMainAppWindow(isVisible) {
     mainWindowOptions.frame = true;
   }
 
-  if(!settings.get("NO_WINDOWS_BOUND", false))applyWindowBoundsToConfig(mainWindowOptions);
+  if (!settings.get("NO_WINDOWS_BOUND", false)) applyWindowBoundsToConfig(mainWindowOptions);
 
   const useGlasstron = settings.get("GLASSTRON", true)
   const BrowserWindow = useGlasstron ? glasstron.BrowserWindow : _electron.BrowserWindow
@@ -523,7 +571,7 @@ function launchMainAppWindow(isVisible) {
   mainWindowId = mainWindow.id;
   global.mainWindowId = mainWindowId;
 
-  if(useGlasstron)setDefaultBlur()
+  if (useGlasstron) setDefaultBlur()
 
   mainWindow.webContents.session.webRequest.onBeforeSendHeaders(
     (details, callback) => {
@@ -535,8 +583,8 @@ function launchMainAppWindow(isVisible) {
     },
   );
 
-  mainWindow.webContents.session.webRequest.onHeadersReceived(function(details, callback) {
-    if (!details.responseHeaders["content-security-policy-report-only"] && !details.responseHeaders["content-security-policy"]) return callback({cancel: false});
+  mainWindow.webContents.session.webRequest.onHeadersReceived(function (details, callback) {
+    if (!details.responseHeaders["content-security-policy-report-only"] && !details.responseHeaders["content-security-policy"]) return callback({ cancel: false });
     delete details.responseHeaders["content-security-policy-report-only"];
     delete details.responseHeaders["content-security-policy"];
     Object.assign(details.responseHeaders, {
@@ -550,11 +598,11 @@ function launchMainAppWindow(isVisible) {
 
   mainWindow.setMenuBarVisibility(false);
 
-  if(!settings.get("NO_WINDOWS_BOUND", false)){
+  if (!settings.get("NO_WINDOWS_BOUND", false)) {
     if (settings.get('IS_MAXIMIZED')) {
       mainWindow.maximize();
     }
-  
+
     if (settings.get('IS_MINIMIZED')) {
       mainWindow.minimize();
     }
@@ -974,7 +1022,7 @@ function init() {
   // electron default behavior is to app.quit here, so long as there are no other listeners. we handle quitting
   // or minimizing to system tray ourselves via mainWindow.on('closed') so this is simply to disable the electron
   // default behavior.
-  _electron.app.on('window-all-closed', () => {});
+  _electron.app.on('window-all-closed', () => { });
 
   _electron.app.on('before-quit', () => {
     saveWindowConfig(mainWindow);
