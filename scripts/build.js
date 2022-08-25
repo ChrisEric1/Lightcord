@@ -148,8 +148,8 @@ async function main(){
         newDir: path.join(PROJECT_DIR, "distApp", "modules"),
         exclude: /discord_spellcheck/g
     }, ((filepath) => filepath.endsWith(".js")), async (filepath, newpath) => {
-        console.info(`Minifying ${filepath} to ${newpath}`)
-        await fs.promises.writeFile(newpath, terser.minify(await fs.promises.readFile(filepath, "utf8")).code, "utf8")
+        console.info(`Copying ${filepath} to ${newpath}`)
+        await fs.promises.writeFile(newpath, await fs.promises.readFile(filepath, "utf8"), "utf8")
     }, true).then(() => {
         console.info(`Copied files and minified them from ${path.join(PROJECT_DIR, "modules")}.`)
     })

@@ -50,7 +50,7 @@
     "fast-glob": "^3.2.11",
     "fs-extra": "^9.0.1",
     "micromatch": "^4.0.5",
-    "terser": "^4.7.0",
+    "terser": "^4.8.1",
     "typescript": "^3.9.7",
     "yazl": "^2.5.1"
   }
