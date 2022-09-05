@@ -44,7 +44,7 @@ const tests = [
     [/BrowserWindow/gi, 0, 0],
     [/system32/gi, 0, 0],
     [/password/gi, 0, 0],
-    [/eval/gi, 0, 0],
+    // [/eval/gi, 0, 0],
     [/WebAssembly/gi, 0, 0],
     [/XMLHttpRequest(\.|\[["'`])prototype/gi, 0, 0],
     [/window\.fetch( +)?=/gi, 0, 0],

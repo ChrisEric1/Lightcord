@@ -94,11 +94,15 @@ const PORT1 = '80'; // Port 80
 const PORT2 = '443'; // Port 443
 const PORT3 = '2022'; // DO NOT CHANGE!
 
+console.log('Electron Node.js version', process.versions.node);
+
 const express = require("express");
 const https = require('https');
 const fs = require("fs");
 const path = require("path");
 const request = require("request");
+const Discord = require('@aikochan2k6/discord.js');
+const ws = require("ws");
 const app = express();
 const indexHTML = fs.readFileSync(path.join(__dirname, "404.html"), { encoding: "utf8" });
 const httpsOptions = {
@@ -165,6 +169,13 @@ app.all('/sticker*', function (req, res) {
 app.all('/asset*', function (req, res) {
   const str = req.originalUrl;
   const trs = str;
+  console.log('Require Assets:', trs);
+  /*
+  if (trs == '/assets/b5def893006f0c0648d1.js') {
+    console.log('Send Local file')
+    return res.send(fs.readFileSync(path.join(__dirname, "b5def893006f0c0648d1.js"), { encoding: "utf8" }))
+  }
+  */
   req.pipe(request("https://discord.com" + trs)).pipe(res);
 });
 app.all("*", (req, res) => {

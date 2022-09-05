@@ -17,6 +17,8 @@ let tries = 0;
 let hasReplacedLocalstorage = false;
 const localStorage = window.localStorage;
 let botStatus = "online";
+let botToken = null;
+let botIntents = null;
 
 const UserAgent = electron.ipcRenderer.sendSync("LIGHTCORD_GET_USER_AGENT").replace(/lightcord\/[^ ]+/g, "discord/" + require("../discord_native/renderer/app").getVersion())
 electron.ipcRenderer.sendSync("LIGHTCORD_SET_USER_AGENT", UserAgent)
@@ -202,7 +204,6 @@ async function privateInit() {
     console.log(`Plugins: ${pluginPath}\nThemes: ${themePath}`)
     if (!fs.existsSync(pluginPath)) {
         fs.mkdirSync(pluginPath, { recursive: true })
-
         /** Downloads Util Plugins So the user don't have to install it manually */
 
         /** ZeresPluginLibrary */
@@ -213,7 +214,7 @@ async function privateInit() {
                 const content = await res.buffer()
                 fs.writeFileSync(ZeresPluginLibraryPath, content)
             })
-
+        
         /** EmbedPlugin */
         const EmbedPluginPath = path.join(pluginPath, "SendEmbeds.plugin.js")
         fetch("https://raw.githubusercontent.com/aiko-chan-ai/BetterDiscord-Embeds/master/SendEmbeds.plugin.js")
@@ -237,24 +238,6 @@ async function privateInit() {
                 if (res.status !== 200) return
                 const content = await res.buffer()
                 fs.writeFileSync(DarkDiscordPath, content)
-            })
-
-        /** Glasscord Example */
-        const GlasscordExamplePath = path.join(themePath, "glasscord_example.theme.css")
-        fetch("https://raw.githubusercontent.com/AryToNeX/Glasscord/master/extras/discord_example_theme/discord_example.theme.css")
-            .then(async res => {
-                if (res.status !== 200) return
-                const content = await res.buffer()
-                fs.writeFileSync(GlasscordExamplePath, content)
-            })
-
-        /** ClearVision */
-        const ClearVisionPath = path.join(themePath, "clearvision6.theme.css")
-        fetch("https://raw.githubusercontent.com/ClearVision/ClearVision-v6/master/ClearVision_v6.theme.css")
-            .then(async res => {
-                if (res.status !== 200) return
-                const content = await res.buffer()
-                fs.writeFileSync(ClearVisionPath, content)
             })
 
         BetterDiscordConfig.haveInstalledDefault = true // Inform User about what we just did
@@ -341,6 +324,8 @@ async function privateInit() {
     let isBot = false
     dispatcher.subscribe("LOGOUT", () => {
         isBot = false
+        botToken = null
+        botIntents = null
     })
     const appSettings = window.Lightcord.Api.settings
         ; (async function () {
@@ -348,20 +333,18 @@ async function privateInit() {
             if (!gatewayModule) return
             let _handleDispatch = gatewayModule.default.prototype._handleDispatch
             gatewayModule.default.prototype._handleDispatch = function (data, event, props) {
-                // console.log('Dispatch', gatewayModule.default.prototype, ...arguments)
                 if (event === "READY") {
-                    console.log(...arguments)
                     isBot = data.user.bot
                     if (data.user.bot) {
                         window._handleDispatch = _handleDispatch;
-                        logger.log(`Logged in as a bot, spoofing user...`)
+                        logger.log(`Logged in as a bot, spoofing user...`);
                         data.user.bot = false
                         data.user.premium = true
                         data.user.premium_type = 2
                         data.user.mfa_enabled = 1
-                        data.user.flags = data.user.flags || "0";
-                        data.user.public_flags = data.user.public_flags || "0";
-                        data.user.phone = "+84123456789";
+                        data.user.flags = data.user.flags || "476111";
+                        data.user.public_flags = data.user.public_flags || "476111";
+                        data.user.phone = "+1234567890";
                         data.user.verified = true;
                         data.user.nsfw_allowed = true;
                         data.user.email = data.user.email || uuid() + "@aiko.com" // filler email, not a real one
@@ -427,7 +410,24 @@ async function privateInit() {
                     } else {
                         electron.ipcRenderer.sendSync("LIGHTCORD_SET_USER_AGENT", UserAgent)
                         logger.log(`Logged in as an user. Skipping user spoofing.`)
+                        data.guilds = data.guilds.map(guild => {
+                            if (Array.isArray(guild.features)) {
+                                guild.features = guild.features.includes("TEXT_IN_VOICE_ENABLED") ? guild.features : ["TEXT_IN_VOICE_ENABLED", ...guild.features];
+                            } else {
+                                guild.features = ["TEXT_IN_VOICE_ENABLED"];
+                            }
+                            return guild;
+                        });
+                        logger.log(`Patched guilds to enable text in voice channels. (USER mode)`);
                     }
+                }
+                if (event === "GUILD_CREATE" || event === "GUILD_UPDATE") {
+                    if (Array.isArray(data.features)) {
+                        data.features = data.features.includes("TEXT_IN_VOICE_ENABLED") ? data.features : ["TEXT_IN_VOICE_ENABLED", ...data.features];
+                    } else {
+                        data.features = ["TEXT_IN_VOICE_ENABLED"];
+                    }
+                    logger.log(`Patched guilds to enable text in voice channels. GuildId`, data.id);
                 }
                 let returnValue = _handleDispatch.call(this, ...arguments)
                 if (event === "READY" && DiscordJS) {
@@ -440,8 +440,12 @@ async function privateInit() {
                 return returnValue
             }
             dispatcher.subscribe("LOGOUT", () => {
-                isBot = false
-            })
+                isBot = false;
+                botToken = null;
+                botIntents = null;
+                privilegedIntents = [];
+            });
+
             function cancelGatewayPrototype(methodName) {
                 if (gatewayModule.default.prototype[methodName]) {
                     const original = gatewayModule.default.prototype[methodName]
@@ -464,15 +468,72 @@ async function privateInit() {
             cancelGatewayPrototype("streamDelete")
             cancelGatewayPrototype("streamSetPaused")
 
+            const IntentFlags = {
+                GUILDS: 1 << 0,
+                GUILD_MEMBERS: 1 << 1,
+                GUILD_BANS: 1 << 2,
+                GUILD_EMOJIS_AND_STICKERS: 1 << 3,
+                GUILD_INTEGRATIONS: 1 << 4,
+                GUILD_WEBHOOKS: 1 << 5,
+                GUILD_INVITES: 1 << 6,
+                GUILD_VOICE_STATES: 1 << 7,
+                GUILD_PRESENCES: 1 << 8,
+                GUILD_MESSAGES: 1 << 9,
+                GUILD_MESSAGE_REACTIONS: 1 << 10,
+                GUILD_MESSAGE_TYPING: 1 << 11,
+                DIRECT_MESSAGES: 1 << 12,
+                DIRECT_MESSAGE_REACTIONS: 1 << 13,
+                DIRECT_MESSAGE_TYPING: 1 << 14,
+                MESSAGE_CONTENT: 1 << 15,
+                GUILD_SCHEDULED_EVENTS: 1 << 16,
+                // https://discord.com/developers/docs/topics/gateway#list-of-intents
+                AUTO_MODERATION_CONFIGURATION: 1 << 20,
+                AUTO_MODERATION_EXECUTION: 1 << 21,
+            };
+
+            const getIntents = (...removeIntents) => Object.values(IntentFlags).reduce((a, b) => a + b) - (removeIntents.flat(2).map(name => IntentFlags[name] || 0).reduce((a, b) => a + b, 0) || 0);
+
+            let privilegedIntents = [];
+
+            const WSCodes = {
+                1000: 'WS_CLOSE_REQUESTED',
+                WS_CLOSE_REQUESTED: 1000,
+                1011: 'INTERNAL_ERROR',
+                INTERNAL_ERROR: 1011,
+                4004: 'TOKEN_INVALID',
+                TOKEN_INVALID: 4004,
+                4010: 'SHARDING_INVALID',
+                SHARDING_INVALID: 4010,
+                4011: 'SHARDING_REQUIRED',
+                SHARDING_REQUIRED: 4011,
+                4013: 'INVALID_INTENTS',
+                INVALID_INTENTS: 4013,
+                4014: 'DISALLOWED_INTENTS',
+                DISALLOWED_INTENTS: 4014,
+            };
+
             const _handleClose = gatewayModule.default.prototype._handleClose
             gatewayModule.default.prototype._handleClose = function (wasClean, code, reason) {
                 let shouldSetIntents = !this.intents
                 delete this.intents
-                if (code === 4013 && shouldSetIntents) {
-                    this.intents = 131071;
+                if (code === WSCodes.INVALID_INTENTS && shouldSetIntents) {
+                    this.intents = getIntents();
+                    botIntents = this.intents;
                 } else if (code === 4014) {
-                    this.intents = 130813;
-                    console.log(`Invalid intents ? Removing them.`)
+                    if (privilegedIntents.length == 2) {
+                        dispatcher.dispatch({
+                            type: "LOGOUT",
+                        });
+                        privilegedIntents = [];
+                        return BdApi.showToast('MESSAGE_CONTENT Intent is required', {
+                            type: 'error',
+                        });
+                    };
+                    privilegedIntents = ['GUILD_PRESENCES', 'GUILD_MEMBERS'];
+                    this.intents = getIntents(privilegedIntents);
+                    botIntents = this.intents;
+                    console.log(`Invalid intents ? Removing them.`);
+                    BdApi.showToast('Removed GUILD_PRESENCES, GUILD_MEMBERS intents');
                 }
                 return _handleClose.call(this, ...arguments)
             }
@@ -486,6 +547,7 @@ async function privateInit() {
                         if (this.intents) {
                             data.intents = this.intents
                         }
+                        botToken = data.token;
                     }
                     return originalSend.call(this, op, data, idkwhat)
                 }
@@ -507,6 +569,14 @@ async function privateInit() {
                     data.presences = data.presences || true;
                     return requestGuildMembers.call(this, guild, data);
                 }
+            }
+
+            const updateGuildSubscriptions = gatewayModule.default.prototype.updateGuildSubscriptions;
+
+            gatewayModule.default.prototype.updateGuildSubscriptions = function () {
+                console.log('updateGuildSubscriptions', ...arguments);
+                if (!isBot) return updateGuildSubscriptions.call(this, ...arguments);
+                return;
             }
 
             const hasUnreadModules = BDModules.get(e => e.default && e.default.hasUnread)
