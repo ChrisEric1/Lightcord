@@ -129,3 +129,4 @@ BetterDiscordApp/dist
 downloaded_modules
 workspace_modules
 new_modules_version.json
+modules/discord_utils/live_minidump.dmp
