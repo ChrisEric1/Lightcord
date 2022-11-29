@@ -1,3 +1,6 @@
+# Discontinued
+> Move to [DiscordBotClient](https://github.com/aiko-chan-ai/DiscordBotClient)
+
 # Bot Login Required
 - Bot <strong>(Enable `Message Intents`)</strong>
 > `Presence Intents` and `Guild Members Intents` are optional
