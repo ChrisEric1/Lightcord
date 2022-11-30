@@ -1847,7 +1847,7 @@ export default interface DiscordConstantsType {
     },
     TransportTypes: {
         "IPC": "ipc",
-        "WEBSOCKET": "ws",
+        "WEBSOCKET": "wss",
         "HTTP": "http"
     },
     ActivityFlags: {

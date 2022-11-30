@@ -12,7 +12,7 @@
     "lodash": "^4.17.21",
     "mkdirp": "^1.0.4",
     "promise.allsettled": "^1.0.0",
-    "request": "^2.88.0",
+    "request": "^2.88.2",
     "rimraf": "^2.6.3",
     "safe-buffer": "^5.2.1",
     "yauzl": "^2.10.0"
