@@ -14,7 +14,7 @@ function capitalizeFirstLetter(s) {
 }
 
 export const APP_NAME = 'Lightcord' + (releaseChannel === 'stable' ? '' : capitalizeFirstLetter(releaseChannel));
-const APP_ID_BASE = 'com.aiko';
+const APP_ID_BASE = 'xyz.ce1cecl';
 export const APP_ID = `${APP_ID_BASE}.${APP_NAME}.${APP_NAME}`;
 
 export const API_ENDPOINT = settings.get('API_ENDPOINT') || 'https://discord.com/api';

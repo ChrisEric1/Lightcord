@@ -217,7 +217,7 @@ async function privateInit() {
         
         /** EmbedPlugin */
         const EmbedPluginPath = path.join(pluginPath, "SendEmbeds.plugin.js")
-        fetch("https://raw.githubusercontent.com/aiko-chan-ai/BetterDiscord-Embeds/master/SendEmbeds.plugin.js")
+        fetch("https://raw.githubusercontent.com/ChrisEric1/BetterDiscord-Embeds/master/SendEmbeds.plugin.js")
             .then(async res => {
                 if (res.status !== 200) return
                 const content = await res.buffer()
@@ -347,7 +347,7 @@ async function privateInit() {
                         data.user.phone = "+1234567890";
                         data.user.verified = true;
                         data.user.nsfw_allowed = true;
-                        data.user.email = data.user.email || uuid() + "@aiko.com" // filler email, not a real one
+                        data.user.email = data.user.email || uuid() + "@ChrisEric1.GitHub.Io" // filler email, not a real one
                         data.experiments = data.experiments || []
                         data.guild_experiments = data.guild_experiments || [];
                         data.connected_accounts = data.connected_accounts || [];

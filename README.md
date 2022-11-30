@@ -1,5 +1,3 @@
-# Discontinued
-> Move to [DiscordBotClient](https://github.com/aiko-chan-ai/DiscordBotClient)
 
 # Bot Login Required
 - Bot <strong>(Enable `Message Intents`)</strong>
